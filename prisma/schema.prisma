@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id            String          @id
+  fullname      String
+  email         String          @unique
+  role          String
+  phone         String
+  password      String
+  created_at    DateTime        @default(now())
+  refresh_token refresh_token[]
+  itineraries   itineraries[]
+}
+
+model refresh_token {
+  id         String   @id
+  token      String   @unique
+  user_id    String
+  user       user     @relation(fields: [user_id], references: [id])
+  created_at DateTime @default(now())
+  expires_at DateTime
+}
+
+model details {
+  itinerary_id  String      @id
+  description   String
+  tour          String?
+  alert         String?
+  duration      Int?
+  meetingpoint  String?
+  costperperson Decimal?    @db.Decimal(10, 2)
+  included      String?
+  notincluded   String?
+  additional    Json?
+  itineraries   itineraries @relation(fields: [itinerary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  optional      optional[]
+}
+
+model itineraries {
+  id      String   @id
+  user_id String
+  name    String
+  cover   String?
+  popular Boolean? @default(false)
+  link    String?  @unique
+  details details?
+  media   media[]
+  user    user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model media {
+  id           String       @id
+  itinerary_id String?
+  url          String?
+  itineraries  itineraries? @relation(fields: [itinerary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model optional {
+  id           String   @id
+  detail_id    String?
+  title        String
+  description  String?
+  duration     Int?
+  price        Decimal? @db.Decimal(10, 2)
+  observations String?
+  details      details? @relation(fields: [detail_id], references: [itinerary_id], onDelete: NoAction, onUpdate: NoAction)
+}
