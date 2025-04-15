@@ -12,6 +12,9 @@ const app = express();
 
 dotenv.config();
 
+// Middlewares
+app.use(express.json());
+
 // Routes
 app.use("/users", userRoutes);
 app.use("/itineraries", itineraryRoutes);
@@ -20,3 +23,5 @@ app.use("/itineraries", itineraryRoutes);
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is running!");
 });
+
+export default app;
