@@ -21,7 +21,7 @@ app.use("/itineraries", itineraryRoutes);
 
 // Test route
 app.get("/", (req: Request, res: Response) => {
-  res.send("Server is running!");
+  res.status(200).json({ message: "Server is running!" });
 });
 
 export default app;
